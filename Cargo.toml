@@ -1,5 +1,5 @@
 [package]
-name = "fast-whitespace-collapse"
+name = "fast_whitespace_collapse"
 version = "0.1.0"
 edition = "2021"
 authors = ["Nikita Madebeykin"]
@@ -9,7 +9,7 @@ name = "fast_whitespace_collapse"
 path = "src/lib.rs"
 
 [dependencies]
-wide = "0.7.32"
+wide = { version = "0.7.32", optional = true }
 
 [dev-dependencies]
 collapse = "0.1.2"
@@ -19,3 +19,7 @@ regex = "1.11.1"
 [[bench]]
 name = "collapse"
 harness = false
+
+[features]
+simd-optimized = ["dep:wide"]  # Enables SIMD (`u8x16`) using `wide`
+default = ["simd-optimized"]  # Enable SIMD by default
