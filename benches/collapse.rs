@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use regex::Regex;
 
@@ -84,6 +86,7 @@ fn benchmark(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("whitespace_normalization");
     group.sample_size(500);
+    group.measurement_time(Duration::from_secs(20));
 
     group.bench_function("regex_approach", |b| {
         b.iter_batched(|| (s, Regex::new(r"\s\s+").unwrap()), |(s, re)| regex_approach(black_box(&s), black_box(&re)), criterion::BatchSize::LargeInput)
@@ -101,7 +104,7 @@ fn benchmark(c: &mut Criterion) {
         b.iter_batched(|| s, |s| cargo_collapse(black_box(s)), criterion::BatchSize::LargeInput)
     });
 
-    group.bench_function("fast-whitespace-collapse", |b| {
+    group.bench_function("fast_whitespace_collapse", |b| {
         b.iter_batched(|| s, |s| fast_whitespace_collapse::collapse_whitespace(black_box(s)), criterion::BatchSize::LargeInput)
     });
 
