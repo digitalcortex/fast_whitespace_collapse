@@ -1,6 +1,3 @@
-use wide::u8x16;
-
-
 /// Collapses consecutive spaces and tabs into a single space in the input string.
 ///
 /// This function efficiently processes input using SIMD (`u8x16`) for performance.
@@ -25,7 +22,14 @@ use wide::u8x16;
 /// - Uses SIMD (`u8x16`) to process 16 bytes at a time.
 /// - Falls back to scalar processing for remaining bytes.
 /// - Ensures valid UTF-8 output by keeping only original characters.
+#[cfg(any(
+    all(target_arch = "x86_64", target_feature = "sse2"),   // SSE2 on x86
+    all(target_arch = "x86_64", target_feature = "avx2"),   // AVX2 on x86
+    all(target_arch = "aarch64", target_feature = "neon")   // NEON on ARM (For example Apple M1/M2)
+))]
+#[cfg(feature = "simd-optimized")]
 pub fn collapse_whitespace(input: &str) -> String {
+    use wide::u8x16;
     let bytes = input.as_bytes();
     let len = bytes.len();
     let mut result = Vec::with_capacity(len);
@@ -90,6 +94,71 @@ pub fn collapse_whitespace(input: &str) -> String {
     // Safety: We only push valid UTF-8 bytes
     unsafe { String::from_utf8_unchecked(result) }
 }
+
+
+/// Collapses consecutive spaces and tabs into a single space in the input string.
+///
+/// This function provides a **scalar (non-SIMD) fallback** for `collapse_whitespace`,
+/// ensuring compatibility with architectures that do not support `wide::u8x16` SIMD processing.
+///
+/// It processes the input byte by byte, replacing multiple consecutive spaces and tabs with
+/// a single space while preserving non-whitespace characters.
+///
+/// # Parameters
+/// - `input`: A string slice (`&str`) containing text with irregular spacing.
+///
+/// # Returns
+/// - A `String` with collapsed whitespace, where multiple spaces/tabs are replaced by a single space.
+///
+/// # Example
+/// ```
+/// use fast_whitespace_collapse::collapse_whitespace;
+/// let input = "Hello   \t world   !";
+/// let output = collapse_whitespace(input);
+/// assert_eq!(output, "Hello world !");
+/// ```
+///
+/// # Performance
+/// - This function **does not** use SIMD instructions.
+/// - It **iterates over bytes one by one**, making it slower than SIMD versions.
+/// - It ensures **compatibility across all architectures**, including those without AVX2, SSE2, or NEON.
+///
+/// # When is This Used?
+/// - If compiling for a **non-x86** or **non-aarch64** target.
+/// - If **SIMD is not available** on the target CPU.
+/// - If the Rust compiler **cannot enable** the required SIMD features.
+#[cfg(not(any(
+    all(target_arch = "x86_64", target_feature = "sse2"),
+    all(target_arch = "x86_64", target_feature = "avx2"),
+    all(target_arch = "aarch64", target_feature = "neon")
+)))]
+pub fn collapse_whitespace(input: &str) -> String {
+    let bytes = input.as_bytes();
+    let mut result = Vec::with_capacity(bytes.len());
+    
+    let mut last_was_space = true;
+
+    for &b in bytes {
+        if b == b' ' || b == b'\t' {
+            if !last_was_space {
+                result.push(b' ');
+                last_was_space = true;
+            }
+        } else {
+            result.push(b);
+            last_was_space = false;
+        }
+    }
+
+    // Trim trailing space if exists
+    if result.last() == Some(&b' ') {
+        result.pop();
+    }
+
+    // Convert back to a String
+    unsafe { String::from_utf8_unchecked(result) }
+}
+
 
 #[cfg(test)]
 mod tests {
