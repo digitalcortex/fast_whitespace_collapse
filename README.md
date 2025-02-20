@@ -18,7 +18,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-fast_whitespace_collapse = "0.1"
+fast_whitespace_collapse = "0.1.0"
 ```
 
 Or run the following command:
