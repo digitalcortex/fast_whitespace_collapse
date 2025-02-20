@@ -1,6 +1,7 @@
 # fast_whitespace_collapse
 
-[fast_whitespace_collapse](https://crates.io/crates/fast_whitespace_collapse) is a high-performance Rust crate for collapsing consecutive spaces and tabs into a single space.  
+[fast_whitespace_collapse](https://crates.io/crates/fast_whitespace_collapse) is a high-performance Rust crate for collapsing consecutive spaces and tabs into a single space.
+
 Uses **SIMD (`u8x16`) via the [`wide` crate](https://crates.io/crates/wide)** for efficient processing.  
 Automatically falls back to a **scalar implementation** if SIMD is unavailable.
 
