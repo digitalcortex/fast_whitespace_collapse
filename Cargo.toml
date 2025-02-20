@@ -1,0 +1,21 @@
+[package]
+name = "fast-whitespace-collapse"
+version = "0.1.0"
+edition = "2021"
+authors = ["Nikita Madebeykin"]
+
+[lib]
+name = "fast_whitespace_collapse"
+path = "src/lib.rs"
+
+[dependencies]
+wide = "0.7.32"
+
+[dev-dependencies]
+collapse = "0.1.2"
+criterion = "0.5.1"
+regex = "1.11.1"
+
+[[bench]]
+name = "collapse"
+harness = false
