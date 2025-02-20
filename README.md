@@ -78,11 +78,11 @@ cargo bench
 
 ## Compatibility
 
-**fast_whitespace_collapse** supports multiple architectures:
+**`fast_whitespace_collapse`** supports multiple architectures:
 
 - **x86_64**: Uses SIMD (`SSE2`, `AVX2`) for maximum performance.
 - **ARM (aarch64, M1/M2/M3)**: Uses **NEON SIMD**.
-- **Other: Falls back to **a scalar implementation**.
+- **Other**: Falls back to **a scalar implementation**.
 
 ## Examples
 
