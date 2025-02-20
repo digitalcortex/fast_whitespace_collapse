@@ -3,6 +3,12 @@ name = "fast_whitespace_collapse"
 version = "0.1.0"
 edition = "2021"
 authors = ["Nikita Madebeykin"]
+license = "MIT"
+description = "Collapse consecutive spaces and tabs into a single space using SIMD"
+repository = "https://github.com/digitalcortex/fast_whitespace_collapse"
+readme = "README.md"
+keywords = ["whitespace", "collapse", "simd"]
+categories = ["text-processing"]
 
 [lib]
 name = "fast_whitespace_collapse"
